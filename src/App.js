@@ -7,13 +7,17 @@
 // 7. Drawing utilities DONE
 // 8. Draw functions DONE
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 // import logo from './logo.svg';
 import * as tf from "@tensorflow/tfjs";
 import * as handpose from "@tensorflow-models/handpose";
 import Webcam from "react-webcam";
 import "./App.css";
 import { drawHand } from "./utilities";
+
+//import new stuff
+import * as fp from "fingerpose";
+
 
 function App() {
   const webcamRef = useRef(null);
@@ -51,6 +55,17 @@ function App() {
       // Make Detections
       const hand = await net.estimateHands(video);
       console.log(hand);
+
+      if(hand.legnth > 0){
+          const GE = new fp.GestureEstimator([
+              fp.Gesture.VictoryGesture,
+              fp.Gesture.ThumbsUpGesture,
+          ])
+
+          const gesture = await GE.estimate(hand[0].landmarks, 8);
+          console.log(gesture);
+      }
+
 
       // Draw mesh
       const ctx = canvasRef.current.getContext("2d");
